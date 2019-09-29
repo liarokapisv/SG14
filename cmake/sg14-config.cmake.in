@@ -1,0 +1,7 @@
+@PACKAGE_INIT@
+
+find_package(Threads REQUIRED)
+
+if (NOT TARGET sg14::sg14)
+    include(@PACKAGE_SG14_INSTALL_CONFIG_DIR@/sg14-targets.cmake)
+endif()

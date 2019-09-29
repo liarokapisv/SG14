@@ -28,13 +28,9 @@ link_directories(${CMAKE_CURRENT_BINARY_DIR}/lib) # For future use with testing 
 ##
 # Project
 ##
-file(GLOB_RECURSE INCLUDES "${SG14_INCLUDE_DIRECTORY}/*.hpp" "${SG14_INCLUDE_DIRECTORY}/*.h")
 add_library(${PROJECT_NAME} INTERFACE)
-target_include_directories(${PROJECT_NAME} INTERFACE ${SG14_INCLUDE_DIRECTORY})
-target_sources(${PROJECT_NAME} INTERFACE
-	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-	$<BUILD_INTERFACE:${INCLUDES}>
-)
+
+
 target_include_directories(${PROJECT_NAME} INTERFACE
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 	$<BUILD_INTERFACE:${SG14_INCLUDE_DIRECTORY}>
@@ -80,3 +76,33 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 	set_source_files_properties(${SG14_TEST_SOURCE_DIRECTORY}/plf_colony_test.cpp PROPERTIES
 		COMPILE_FLAGS "/wd4127") # Disable conditional expression is constant, use if constexpr
 endif()
+
+install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}_targets)
+
+include(GNUInstallDirs)
+
+set(SG14_INSTALL_CONFIG_DIR "${CMAKE_INSTALL_DATADIR}/cmake/${PROJECT_NAME}")
+
+install(EXPORT ${PROJECT_NAME}_targets
+    NAMESPACE ${PROJECT_NAME}::
+    FILE ${PROJECT_NAME}-targets.cmake
+    DESTINATION "${SG14_INSTALL_CONFIG_DIR}"
+)
+
+include(CMakePackageConfigHelpers)
+
+configure_package_config_file(
+    "${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME}-config.cmake.in"
+    "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+    INSTALL_DESTINATION ${SG14_INSTALL_CONFIG_DIR}
+    NO_SET_AND_CHECK_MACRO
+    NO_CHECK_REQUIRED_COMPONENTS_MACRO
+    PATH_VARS SG14_INSTALL_CONFIG_DIR
+)
+
+install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+    DESTINATION "${SG14_INSTALL_CONFIG_DIR}"
+)
+
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/SG14" DESTINATION include)
+
