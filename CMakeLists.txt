@@ -37,9 +37,14 @@ target_include_directories(${PROJECT_NAME} INTERFACE
 	$<BUILD_INTERFACE:${SG14_INCLUDE_DIRECTORY}>
 )
 
+
 ##
 # Unit Tests
 ##
+option(SG14_ENABLE_TESTS "Enables unit tests" OFF)
+
+if (${SG14_ENABLE_TESTS})
+
 set(TEST_SOURCE_FILES
     ${SG14_TEST_SOURCE_DIRECTORY}/main.cpp
     ${SG14_TEST_SOURCE_DIRECTORY}/flat_map_test.cpp
@@ -77,6 +82,12 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 	set_source_files_properties(${SG14_TEST_SOURCE_DIRECTORY}/plf_colony_test.cpp PROPERTIES
 		COMPILE_FLAGS "/wd4127") # Disable conditional expression is constant, use if constexpr
 endif()
+
+endif() 
+
+##
+# End of Unit Tests
+##
 
 install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}_targets)
 
